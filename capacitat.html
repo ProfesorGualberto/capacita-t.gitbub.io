@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capacita-T · Tecnología para Docentes</title>
+  <meta name="description" content="Capacita-T: Una nueva forma de conectar. Tecnología cinematográfica e interactiva para docentes.">
+  
+  <!-- Tipografía oficial -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400;1,9..40,500&family=Manrope:wght@500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#F6F2EA',
+            creamAlt: '#EFEAE0',
+            creamCard: '#FAF8F5',
+            darkText: '#1D1B18',
+            copper: '#B4532E',
+            copperDark: '#9E4522',
+          },
+          fontFamily: {
+            manrope: ['Manrope', 'sans-serif'],
+            sans: ['DM Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      background-color: #F6F2EA;
+      color: #1D1B18;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    .hero-title {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 500;
+      font-size: clamp(76px, 8.2vw, 140px);
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+    }
+    .canvas-mount canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+      filter: saturate(1.28) contrast(1.045);
+      outline: none;
+      touch-action: none;
+    }
+  </style>
+
+  <!-- Importmap para Three.js 0.186.0 y Addons sin necesidad de empaquetadores -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.186.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.186.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-[#B4532E]/20 selection:text-[#1D1B18]">
+
+  <!-- Cabecera con marca y navegación sencilla -->
+  <header class="sticky top-0 z-40 bg-[#F6F2EA]/90 backdrop-blur-md w-full px-6 md:px-12 lg:px-16 py-6 flex items-center justify-between border-b border-[#1D1B18]/5">
+    <a href="#" class="font-manrope font-medium text-[26px] md:text-[30px] tracking-tight text-[#1D1B18] hover:text-[#B4532E] transition-colors">
+      Capacita-T
+    </a>
+    <nav class="flex items-center space-x-6 md:space-x-10 font-sans font-medium text-[16px] md:text-[17px] text-[#4A453E]">
+      <a href="#nosotros" class="hover:text-[#B4532E] transition-colors">Nosotros</a>
+      <a href="#actividades" class="hover:text-[#B4532E] transition-colors">Actividades</a>
+      <a href="#contacto" class="hover:text-[#B4532E] transition-colors">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- Sección Hero Cinematográfica con Personaje 3D Procedural Tilo -->
+  <section class="hero w-full max-w-[1560px] mx-auto px-6 md:px-12 lg:px-16 pt-8 md:pt-12 pb-16 md:pb-24 flex flex-col justify-center min-h-[calc(100vh-100px)]">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      
+      <!-- Columna Izquierda: Textos y Acción -->
+      <div class="lg:col-span-7 xl:col-span-7 flex flex-col justify-center order-1 lg:order-1 z-10">
+        <h1 class="hero-title text-[#1D1B18] select-none text-balance">
+          Tecnología para Docentes.
+        </h1>
+
+        <p class="font-sans font-normal text-[#45413B] mt-6 md:mt-8 text-[20px] md:text-[23px] lg:text-[25px] leading-snug max-w-xl">
+          Una nueva forma de conectar.
+        </p>
+
+        <div class="mt-8 md:mt-11 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6">
+          <button
+            id="action"
+            type="button"
+            class="font-sans font-medium text-[#FAF8F5] bg-[#B4532E] hover:bg-[#9E4522] active:scale-[0.985] h-[64px] px-10 rounded-full flex items-center justify-center text-[20px] transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B4532E]/35"
+          >
+            Dile hola
+          </button>
+
+          <p
+            id="response"
+            aria-live="polite"
+            class="font-sans text-[18px] md:text-[20px] text-[#1D1B18] transition-opacity duration-300 min-h-[30px] flex items-center font-medium"
+          ></p>
+        </div>
+
+        <!-- Métrica oculta para telemetría y accesibilidad -->
+        <span id="metrics" class="sr-only" aria-live="off">Iniciando escena 3D...</span>
+      </div>
+
+      <!-- Columna Derecha: Personaje Procedural 3D en Three.js -->
+      <div class="lg:col-span-5 xl:col-span-5 flex items-center justify-center order-2 lg:order-2 w-full">
+        <div
+          id="visual"
+          tabindex="0"
+          role="region"
+          aria-label="Personaje interactivo 3D Tilo. Usa las teclas de flecha para mover la mirada y Home para centrarla."
+          class="w-full h-[460px] sm:h-[520px] md:h-[600px] lg:h-[700px] max-w-[620px] rounded-3xl relative flex items-center justify-center focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#B4532E]/40 transition-shadow cursor-grab active:cursor-grabbing"
+        >
+          <div class="canvas-mount w-full h-full relative overflow-hidden select-none"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Nosotros -->
+  <section id="nosotros" class="w-full max-w-[1560px] mx-auto px-6 md:px-12 lg:px-16 py-20 md:py-28 border-t border-[#1D1B18]/8">
+    <div class="max-w-4xl">
+      <span class="font-sans text-[15px] font-medium tracking-widest uppercase text-[#B4532E]">
+        Comunidad Docente entre Pares
+      </span>
+      <h2 class="font-manrope font-medium text-[42px] sm:text-[54px] md:text-[64px] text-[#1D1B18] leading-[1.05] tracking-tight mt-3">
+        Nosotros
+      </h2>
+      <p class="font-sans text-[21px] md:text-[25px] text-[#45413B] mt-6 leading-relaxed">
+        Somos un grupo de docentes que hemos tomado la iniciativa de colaborarnos entre pares en el aspecto tecnológico.
+      </p>
+    </div>
+
+    <!-- Pilares de la iniciativa docente -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-14">
+      <div class="bg-[#EFEAE0] p-8 md:p-10 rounded-3xl flex flex-col justify-between border border-[#1D1B18]/5">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-[#B4532E]/10 text-[#B4532E] flex items-center justify-center mb-6">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          </div>
+          <h3 class="font-manrope font-medium text-[24px] text-[#1D1B18] mb-3">
+            Colaboración entre pares
+          </h3>
+          <p class="font-sans text-[17px] text-[#4A453E] leading-relaxed">
+            Damos clases todos los días y conocemos de primera mano los desafíos reales del aula universitaria y escolar. Nos ayudamos mutuamente sin rodeos técnicos ni fórmulas complicadas.
+          </p>
+        </div>
+        <div class="mt-8 pt-6 border-t border-[#1D1B18]/10 text-[15px] font-sans text-[#787268]">
+          Docentes reales apoyando a docentes.
+        </div>
+      </div>
+
+      <div class="bg-[#EFEAE0] p-8 md:p-10 rounded-3xl flex flex-col justify-between border border-[#1D1B18]/5">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-[#B4532E]/10 text-[#B4532E] flex items-center justify-center mb-6">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+          </div>
+          <h3 class="font-manrope font-medium text-[24px] text-[#1D1B18] mb-3">
+            Reuniones semanales
+          </h3>
+          <p class="font-sans text-[17px] text-[#4A453E] leading-relaxed">
+            Nos reunimos religiosamente una vez a la semana en un espacio abierto de aprendizaje práctico, donde probamos herramientas emergentes, compartimos trucos y co-diseñamos materiales didácticos.
+          </p>
+        </div>
+        <div class="mt-8 pt-6 border-t border-[#1D1B18]/10 text-[15px] font-sans text-[#787268]">
+          Encuentros continuos de co-diseño.
+        </div>
+      </div>
+
+      <div class="bg-[#EFEAE0] p-8 md:p-10 rounded-3xl flex flex-col justify-between border border-[#1D1B18]/5 md:col-span-2 lg:col-span-1">
+        <div>
+          <div class="w-14 h-14 rounded-2xl bg-[#B4532E]/10 text-[#B4532E] flex items-center justify-center mb-6">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+          </div>
+          <h3 class="font-manrope font-medium text-[24px] text-[#1D1B18] mb-3">
+            Transmisión por Teams
+          </h3>
+          <p class="font-sans text-[17px] text-[#4A453E] leading-relaxed">
+            Transmitimos cada una de nuestras sesiones directamente por Microsoft Teams. Grabamos y documentamos cada tema para que cualquier profesor pueda conectarse en vivo o repasarlo a su propio ritmo.
+          </p>
+        </div>
+        <div class="mt-8 pt-6 border-t border-[#1D1B18]/10 text-[15px] font-sans text-[#787268]">
+          Acceso libre para toda la comunidad.
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner con llamado a la acción -->
+    <div class="mt-12 bg-[#1D1B18] text-[#FAF8F5] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div class="max-w-2xl">
+        <h4 class="font-manrope font-medium text-[24px] md:text-[28px] text-[#FAF8F5] leading-snug">
+          «Aprender tecnología entre colegas es más humano, más rápido y se traduce directo en mejores clases.»
+        </h4>
+        <p class="font-sans text-[16px] text-[#C9C3B8] mt-3">
+          Capacita-T · Iniciativa docente nacida en Santa Cruz de la Sierra.
+        </p>
+      </div>
+      <a
+        href="#contacto"
+        class="inline-flex items-center gap-2 bg-[#B4532E] hover:bg-[#9E4522] text-[#FAF8F5] font-sans font-medium px-8 h-[54px] rounded-full transition-all shrink-0 text-[17px]"
+      >
+        Súmate a la sesión semanal
+      </a>
+    </div>
+  </section>
+
+  <!-- Sección: Actividades con Simuladores -->
+  <section id="actividades" class="w-full max-w-[1560px] mx-auto px-6 md:px-12 lg:px-16 py-20 md:py-28 border-t border-[#1D1B18]/8">
+    <div class="max-w-4xl">
+      <span class="font-sans text-[15px] font-medium tracking-widest uppercase text-[#B4532E]">
+        Laboratorio & Talleres Prácticos
+      </span>
+      <h2 class="font-manrope font-medium text-[42px] sm:text-[54px] md:text-[64px] text-[#1D1B18] leading-[1.05] tracking-tight mt-3">
+        Actividades
+      </h2>
+      <p class="font-sans text-[21px] md:text-[25px] text-[#45413B] mt-6 leading-relaxed">
+        Explora y simula las actividades pedagógicas y tecnológicas que desarrollamos semanalmente: infografías, documentos colaborativos, análisis de datos y recursos interactivos.
+      </p>
+    </div>
+
+    <!-- Pestañas interactivas de actividades -->
+    <div class="flex flex-wrap gap-3 mt-12 border-b border-[#1D1B18]/10 pb-5">
+      <button onclick="setTab('infografias')" id="tab-btn-infografias" class="tab-btn px-6 py-3.5 rounded-full font-sans font-medium text-[17px] transition-all bg-[#B4532E] text-white shadow-sm">
+        Infografías Educativas
+      </button>
+      <button onclick="setTab('documentos')" id="tab-btn-documentos" class="tab-btn px-6 py-3.5 rounded-full font-sans font-medium text-[17px] transition-all bg-[#EFEAE0] text-[#4A453E] hover:bg-[#E5DEC0]">
+        Documentos y Guías
+      </button>
+      <button onclick="setTab('datos')" id="tab-btn-datos" class="tab-btn px-6 py-3.5 rounded-full font-sans font-medium text-[17px] transition-all bg-[#EFEAE0] text-[#4A453E] hover:bg-[#E5DEC0]">
+        Análisis de Datos
+      </button>
+      <button onclick="setTab('evaluacion')" id="tab-btn-evaluacion" class="tab-btn px-6 py-3.5 rounded-full font-sans font-medium text-[17px] transition-all bg-[#EFEAE0] text-[#4A453E] hover:bg-[#E5DEC0]">
+        Evaluaciones y Rúbricas
+      </button>
+    </div>
+
+    <!-- Contenido del Simulador -->
+    <div class="mt-8 bg-[#EFEAE0] rounded-3xl p-6 sm:p-10 border border-[#1D1B18]/6 shadow-sm">
+      
+      <!-- Panel 1: Infografías -->
+      <div id="panel-infografias" class="activity-panel space-y-8">
+        <div>
+          <h3 class="font-manrope font-medium text-[28px] text-[#1D1B18]">
+            Simulador: Creación de Infografías y Esquemas Visuales
+          </h3>
+          <p class="font-sans text-[17px] text-[#5A544C] mt-1">
+            Diseño ágil de recursos visuales claros que sintetizan conceptos complejos para los estudiantes.
+          </p>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-2xl p-6 sm:p-8 border border-[#1D1B18]/8">
+          <div class="flex items-center justify-between border-b border-[#1D1B18]/8 pb-4 mb-6">
+            <div>
+              <span class="text-[12px] font-bold uppercase tracking-wider text-[#B4532E]">Infografía Generada</span>
+              <h4 class="font-manrope font-medium text-[22px] text-[#1D1B18]">Fases del Aprendizaje Activo en el Aula</h4>
+            </div>
+            <span class="text-[13px] bg-[#EAE4D8] px-3 py-1 rounded-full text-[#4A453E]">Herramientas: Canva / Genially</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-[#F4EFE6] p-5 rounded-xl border-t-4 border-[#B4532E]">
+              <span class="font-manrope font-semibold text-[20px] text-[#B4532E]">01</span>
+              <h5 class="font-manrope font-medium text-[17px] text-[#1D1B18] mt-1">Exploración Previa</h5>
+              <p class="font-sans text-[14px] text-[#5A544C] mt-2">Lectura de disparadores o video corto en Teams antes de clase.</p>
+            </div>
+            <div class="bg-[#F4EFE6] p-5 rounded-xl border-t-4 border-[#3D695A]">
+              <span class="font-manrope font-semibold text-[20px] text-[#3D695A]">02</span>
+              <h5 class="font-manrope font-medium text-[17px] text-[#1D1B18] mt-1">Debate & Pregunta</h5>
+              <p class="font-sans text-[14px] text-[#5A544C] mt-2">Dilema grupal en aula y discusión de criterios prácticos.</p>
+            </div>
+            <div class="bg-[#F4EFE6] p-5 rounded-xl border-t-4 border-[#8B5A2B]">
+              <span class="font-manrope font-semibold text-[20px] text-[#8B5A2B]">03</span>
+              <h5 class="font-manrope font-medium text-[17px] text-[#1D1B18] mt-1">Producción en Pares</h5>
+              <p class="font-sans text-[14px] text-[#5A544C] mt-2">Creación de prototipo, documento o mapa de resolución.</p>
+            </div>
+            <div class="bg-[#F4EFE6] p-5 rounded-xl border-t-4 border-[#1D1B18]">
+              <span class="font-manrope font-semibold text-[20px] text-[#1D1B18]">04</span>
+              <h5 class="font-manrope font-medium text-[17px] text-[#1D1B18] mt-1">Metacognición</h5>
+              <p class="font-sans text-[14px] text-[#5A544C] mt-2">Evaluación formativa breve con retroalimentación inmediata.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Documentos -->
+      <div id="panel-documentos" class="activity-panel space-y-8 hidden">
+        <div>
+          <h3 class="font-manrope font-medium text-[28px] text-[#1D1B18]">
+            Simulador: Elaboración de Documentos y Guías Didácticas
+          </h3>
+          <p class="font-sans text-[17px] text-[#5A544C] mt-1">
+            Redacción colaborativa de sílabos, planes de sesión e instrumentos pedagógicos.
+          </p>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-2xl p-6 sm:p-8 border border-[#1D1B18]/8">
+          <div class="border-b border-[#1D1B18]/8 pb-4 mb-5 flex items-center justify-between">
+            <div>
+              <span class="text-[12px] font-semibold text-[#B4532E] uppercase">Plantilla Capacita-T · DOC-01</span>
+              <h4 class="font-manrope font-medium text-[22px] text-[#1D1B18]">Guía de Aprendizaje Modular</h4>
+            </div>
+            <span class="text-[13px] bg-[#EFEAE0] px-3 py-1 rounded-full text-[#4A453E]">Formato Colaborativo</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-[15px] font-sans">
+            <div class="space-y-4">
+              <div class="bg-[#F6F2EA] p-4 rounded-xl">
+                <strong class="block text-[#1D1B18] font-medium mb-1">1. Resultado de Aprendizaje</strong>
+                <p class="text-[#5A544C]">El estudiante contrasta fuentes bibliográficas y evalúa consistencia en datos primarios.</p>
+              </div>
+              <div class="bg-[#F6F2EA] p-4 rounded-xl">
+                <strong class="block text-[#1D1B18] font-medium mb-1">2. Recursos y Herramientas sugeridas</strong>
+                <p class="text-[#5A544C]">Repositorio institucional Nur, hoja de cálculo compartida en OneDrive y canales de Teams.</p>
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="bg-[#F6F2EA] p-4 rounded-xl">
+                <strong class="block text-[#1D1B18] font-medium mb-1">3. Tarea Práctica Entregable</strong>
+                <p class="text-[#5A544C]">Informe sintético en PDF con gráfico explicativo y conclusiones argumentadas.</p>
+              </div>
+              <div class="bg-[#F6F2EA] p-4 rounded-xl">
+                <strong class="block text-[#1D1B18] font-medium mb-1">4. Criterios de Evaluación</strong>
+                <p class="text-[#5A544C]">Claridad argumental (40%), Rigor técnico (35%), Presentación y fuentes (25%).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3: Análisis de Datos -->
+      <div id="panel-datos" class="activity-panel space-y-8 hidden">
+        <div>
+          <h3 class="font-manrope font-medium text-[28px] text-[#1D1B18]">
+            Simulador: Análisis de Datos Pedagógicos y Seguimiento
+          </h3>
+          <p class="font-sans text-[17px] text-[#5A544C] mt-1">
+            Lectura e interpretación de métricas de rendimiento, entrega de actividades y participación en Teams.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-[#FAF8F5] p-5 rounded-2xl border border-[#1D1B18]/8">
+            <span class="text-[#787268] text-[14px]">Asistencia a Sesiones Teams</span>
+            <div class="font-manrope font-medium text-[36px] text-[#1D1B18] mt-2">92.4%</div>
+            <div class="w-full bg-[#EAE4D8] h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-[#B4532E] h-full rounded-full" style="width: 92.4%"></div>
+            </div>
+            <span class="text-[12px] text-emerald-700 font-medium block mt-2">+4.2% comparado al mes previo</span>
+          </div>
+
+          <div class="bg-[#FAF8F5] p-5 rounded-2xl border border-[#1D1B18]/8">
+            <span class="text-[#787268] text-[14px]">Tasa de Entrega de Tareas</span>
+            <div class="font-manrope font-medium text-[36px] text-[#1D1B18] mt-2">88.6%</div>
+            <div class="w-full bg-[#EAE4D8] h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-[#3D695A] h-full rounded-full" style="width: 88.6%"></div>
+            </div>
+            <span class="text-[12px] text-[#5A544C] block mt-2">108 de 120 alumnos al día</span>
+          </div>
+
+          <div class="bg-[#FAF8F5] p-5 rounded-2xl border border-[#1D1B18]/8">
+            <span class="text-[#787268] text-[14px]">Participación en Foros</span>
+            <div class="font-manrope font-medium text-[36px] text-[#1D1B18] mt-2">76.8%</div>
+            <div class="w-full bg-[#EAE4D8] h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-[#B4532E] h-full rounded-full" style="width: 76.8%"></div>
+            </div>
+            <span class="text-[12px] text-[#B4532E] font-medium block mt-2">Intervenciones reflexivas</span>
+          </div>
+
+          <div class="bg-[#FAF8F5] p-5 rounded-2xl border border-[#1D1B18]/8">
+            <span class="text-[#787268] text-[14px]">Comprensión Evaluativa</span>
+            <div class="font-manrope font-medium text-[36px] text-[#1D1B18] mt-2">84.2/100</div>
+            <div class="w-full bg-[#EAE4D8] h-2 rounded-full mt-3 overflow-hidden">
+              <div class="bg-[#1D1B18] h-full rounded-full" style="width: 84.2%"></div>
+            </div>
+            <span class="text-[12px] text-[#5A544C] block mt-2">Promedio acumulado</span>
+          </div>
+        </div>
+
+        <div class="bg-[#FAF8F5] p-6 rounded-2xl border border-[#1D1B18]/8">
+          <h5 class="font-manrope font-medium text-[17px] text-[#1D1B18]">Conclusión pedagógica del análisis:</h5>
+          <p class="font-sans text-[14px] text-[#5A544C] mt-1">
+            La incorporación de infografías previas a la sesión aumentó la retención conceptual en un 18% en comparación con documentos de texto extensos tradicionales.
+          </p>
+        </div>
+      </div>
+
+      <!-- Panel 4: Evaluaciones -->
+      <div id="panel-evaluacion" class="activity-panel space-y-6 hidden">
+        <div>
+          <h3 class="font-manrope font-medium text-[28px] text-[#1D1B18]">
+            Simulador: Evaluación Formativa y Rúbricas
+          </h3>
+          <p class="font-sans text-[17px] text-[#5A544C] mt-1">
+            Estrategias para retroalimentación constructiva sin sobrecargar la jornada docente.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-[#FAF8F5] p-6 rounded-2xl border border-[#1D1B18]/8">
+            <h4 class="font-manrope font-medium text-[19px] text-[#1D1B18]">Rúbricas Analíticas</h4>
+            <p class="font-sans text-[15px] text-[#5A544C] mt-2 leading-relaxed">
+              Desglose de criterios con niveles graduados (Excelente, Competente, En desarrollo). Automatiza la suma de puntajes en Teams y hojas compartidas.
+            </p>
+          </div>
+
+          <div class="bg-[#FAF8F5] p-6 rounded-2xl border border-[#1D1B18]/8">
+            <h4 class="font-manrope font-medium text-[19px] text-[#1D1B18]">Cuestionarios Formativos</h4>
+            <p class="font-sans text-[15px] text-[#5A544C] mt-2 leading-relaxed">
+              Preguntas de autoverificación con retroalimentación inmediata, diseñadas en Microsoft Forms para identificar vacíos conceptuales en tiempo real.
+            </p>
+          </div>
+
+          <div class="bg-[#FAF8F5] p-6 rounded-2xl border border-[#1D1B18]/8">
+            <h4 class="font-manrope font-medium text-[19px] text-[#1D1B18]">Coevaluación entre Pares</h4>
+            <p class="font-sans text-[15px] text-[#5A544C] mt-2 leading-relaxed">
+              Protocolos guiados para que los pares revisen entregables con respeto, fundamentación y listas de cotejo claras.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección: Contacto -->
+  <section id="contacto" class="w-full max-w-[1560px] mx-auto px-6 md:px-12 lg:px-16 py-20 md:py-28 border-t border-[#1D1B18]/8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      
+      <!-- Datos de Contacto Izquierda -->
+      <div class="lg:col-span-5 flex flex-col justify-between">
+        <div>
+          <span class="font-sans text-[15px] font-medium tracking-widest uppercase text-[#B4532E]">
+            Encuéntranos & Conéctate
+          </span>
+          <h2 class="font-manrope font-medium text-[42px] sm:text-[54px] md:text-[60px] text-[#1D1B18] leading-[1.05] tracking-tight mt-3">
+            Contacto
+          </h2>
+          <p class="font-sans text-[20px] md:text-[22px] text-[#45413B] mt-5 leading-relaxed">
+            Únete a nuestras reuniones semanales de intercambio docente o coordina una visita en nuestro campus.
+          </p>
+
+          <div class="mt-10 space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#EFEAE0] text-[#B4532E] flex items-center justify-center shrink-0 border border-[#1D1B18]/5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              </div>
+              <div>
+                <h3 class="font-manrope font-medium text-[18px] text-[#1D1B18]">Sede Presencial</h3>
+                <p class="font-sans text-[16px] text-[#5A544C] mt-1"><strong>Universidad Nur</strong></p>
+                <p class="font-sans text-[16px] text-[#5A544C]">Avenida Cristo Redentor #100</p>
+                <p class="font-sans text-[15px] text-[#787268]">Santa Cruz de la Sierra, Bolivia</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#EFEAE0] text-[#B4532E] flex items-center justify-center shrink-0 border border-[#1D1B18]/5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+              </div>
+              <div>
+                <h3 class="font-manrope font-medium text-[18px] text-[#1D1B18]">Reuniones Virtuales</h3>
+                <p class="font-sans text-[16px] text-[#5A544C] mt-1">Canal Virtual: Sesiones semanales por <strong>Microsoft Teams</strong></p>
+                <p class="font-sans text-[15px] text-[#787268]">Miércoles 17:00 a 18:00 (GMT-4)</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-2xl bg-[#EFEAE0] text-[#B4532E] flex items-center justify-center shrink-0 border border-[#1D1B18]/5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+              </div>
+              <div>
+                <h3 class="font-manrope font-medium text-[18px] text-[#1D1B18]">Correo Institucional</h3>
+                <p class="font-sans text-[16px] text-[#5A544C] mt-1">capacitat@nur.edu.bo</p>
+                <p class="font-sans text-[15px] text-[#787268]">coordinacion@capacita-t.org</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 p-6 bg-[#EFEAE0] rounded-2xl border border-[#1D1B18]/5">
+          <span class="text-[13px] font-semibold uppercase tracking-wider text-[#B4532E]">Iniciativa Abierta</span>
+          <p class="font-sans text-[15px] text-[#4A453E] mt-1 leading-snug">
+            La participación no tiene costo. Cualquier profesor interesado en mejorar su práctica pedagógica con tecnología es bienvenido.
+          </p>
+        </div>
+      </div>
+
+      <!-- Formulario de Contacto Derecha -->
+      <div class="lg:col-span-7">
+        <div class="bg-[#FAF8F5] p-8 sm:p-12 rounded-3xl border border-[#1D1B18]/8 shadow-sm">
+          <h3 class="font-manrope font-medium text-[28px] text-[#1D1B18]">
+            Participa en la próxima sesión
+          </h3>
+          <p class="font-sans text-[16px] text-[#5A544C] mt-2 mb-8">
+            Completa tus datos para enviarte el enlace de Microsoft Teams y los materiales de la semana.
+          </p>
+
+          <form id="contact-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label class="block font-sans text-[15px] font-medium text-[#1D1B18] mb-2">Nombre completo *</label>
+                <input type="text" id="form-name" required placeholder="Ej. Prof. Carlos Méndez" class="w-full bg-[#F6F2EA] border border-[#1D1B18]/15 rounded-xl px-4 py-3.5 text-[16px] font-sans text-[#1D1B18] focus:outline-none focus:ring-2 focus:ring-[#B4532E]">
+              </div>
+              <div>
+                <label class="block font-sans text-[15px] font-medium text-[#1D1B18] mb-2">Correo electrónico *</label>
+                <input type="email" id="form-email" required placeholder="ejemplo@nur.edu.bo" class="w-full bg-[#F6F2EA] border border-[#1D1B18]/15 rounded-xl px-4 py-3.5 text-[16px] font-sans text-[#1D1B18] focus:outline-none focus:ring-2 focus:ring-[#B4532E]">
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-sans text-[15px] font-medium text-[#1D1B18] mb-2">Área, Carrera o Asignatura que impartes</label>
+              <input type="text" placeholder="Ej. Educación, Ingeniería, Salud, Humanidades..." class="w-full bg-[#F6F2EA] border border-[#1D1B18]/15 rounded-xl px-4 py-3.5 text-[16px] font-sans text-[#1D1B18] focus:outline-none focus:ring-2 focus:ring-[#B4532E]">
+            </div>
+
+            <div>
+              <label class="block font-sans text-[15px] font-medium text-[#1D1B18] mb-2">¿Qué herramienta te gustaría explorar en las reuniones?</label>
+              <textarea rows="4" placeholder="Ej. Me interesa aprender a crear infografías y organizar rúbricas en Teams..." class="w-full bg-[#F6F2EA] border border-[#1D1B18]/15 rounded-xl px-4 py-3.5 text-[16px] font-sans text-[#1D1B18] focus:outline-none focus:ring-2 focus:ring-[#B4532E] resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full sm:w-auto font-sans font-medium text-white bg-[#B4532E] hover:bg-[#9E4522] active:scale-[0.985] h-[58px] px-10 rounded-full flex items-center justify-center gap-3 text-[18px] transition-all cursor-pointer shadow-sm hover:shadow-md">
+              <span>Quiero sumarme a la sesión</span>
+            </button>
+          </form>
+
+          <div id="form-success" class="hidden bg-[#EFEAE0] p-8 rounded-2xl border border-emerald-600/30 text-center space-y-4">
+            <h4 class="font-manrope font-medium text-[22px] text-[#1D1B18]">¡Bienvenido a la comunidad!</h4>
+            <p class="font-sans text-[16px] text-[#4A453E] max-w-md mx-auto">
+              Hemos registrado tu solicitud. Te enviaremos el enlace directo de Microsoft Teams para la sesión de este miércoles (17:00 a 18:00 GMT-4).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pie de página -->
+  <footer class="w-full px-6 md:px-12 lg:px-16 py-8 text-center border-t border-[#1D1B18]/8">
+    <p class="font-sans text-[15px] md:text-[16px] text-[#787268] tracking-normal">
+      Desarrollado por Capacita-T
+    </p>
+  </footer>
+
+  <!-- Script Modular Three.js para el Personaje 3D e Interacciones -->
+  <script type="module">
+    import * as THREE from 'three';
+    import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+    async function mountScene() {
+      const hero = document.querySelector('.hero');
+      const host = document.querySelector('#visual');
+      const mount = host.querySelector('.canvas-mount');
+      const status = document.querySelector('#metrics');
+      const response = document.querySelector('#response');
+      const action = document.querySelector('#action');
+
+      if (!host || !mount) return;
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      let paused = reduced.matches, visible = true, disposed = false, raf = 0, last = 0, elapsed = 0, frameCount = 0, measured = 0, meanFrame = 0, sayHi = 0;
+      const pointer = new THREE.Vector2(0, 0), smooth = new THREE.Vector2(0, 0);
+
+      let renderer;
+      try {
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+      } catch (e) {
+        if (status) status.textContent = 'WebGL no disponible. Se conserva la composición estática.';
+        return;
+      }
+
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, innerWidth < 700 ? 1.25 : 1.75));
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 0.76;
+      renderer.setClearColor(0x000000, 0);
+      mount.replaceChildren(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+      camera.position.set(0, 0.15, 7.8);
+      camera.lookAt(0, 0, 0);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      const geometries = new Set(), materials = new Set(), textures = new Set();
+      const geo = g => (geometries.add(g), g), mat = m => (materials.add(m), m);
+
+      function mesh(g, m, parent = group, pos = [0,0,0], scale = [1,1,1]) {
+        const n = new THREE.Mesh(geo(g), m);
+        n.position.set(...pos);
+        n.scale.set(...scale);
+        parent.add(n);
+        return n;
+      }
+
+      // Iluminación y Estudio RoomEnvironment
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const room = new RoomEnvironment();
+      const envTarget = pmrem.fromScene(room, 0.025);
+      scene.environment = envTarget.texture;
+      room.dispose();
+      scene.environmentIntensity = 0.7;
+
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x434137, 0.75));
+      const key = new THREE.DirectionalLight(0xffebd5, 2.3); key.position.set(-3, 5, 5); scene.add(key);
+      const fill = new THREE.DirectionalLight(0xd4ecff, 1.3); fill.position.set(4, 1, 2); scene.add(fill);
+      const rim = new THREE.DirectionalLight(0xffffff, 3); rim.position.set(0, 3, -3); scene.add(rim);
+
+      // Materiales y Modelado del personaje Tilo
+      const ceramic = mat(new THREE.MeshPhysicalMaterial({ color: 0xe9e3c7, roughness: 0.27, metalness: 0.16, clearcoat: 1, clearcoatRoughness: 0.25 }));
+      const copper = mat(new THREE.MeshStandardMaterial({ color: 0xb4532e, roughness: 0.3, metalness: 0.7 }));
+      const dark = mat(new THREE.MeshPhysicalMaterial({ color: 0x101b1a, roughness: 0.16, metalness: 0.35, clearcoat: 1 }));
+      const trim = mat(new THREE.MeshStandardMaterial({ color: 0x777867, roughness: 0.25, metalness: 1 }));
+      const glow = mat(new THREE.MeshBasicMaterial({ color: 0xe4ffb3 }));
+
+      const head = new THREE.Group();
+      head.position.y = 0.43;
+      group.add(head);
+
+      mesh(new RoundedBoxGeometry(2.15, 1.76, 1.5, 5, 0.47), ceramic, head);
+      mesh(new RoundedBoxGeometry(1.83, 1.16, 0.28, 5, 0.3), trim, head, [0, -0.04, 0.69]);
+      mesh(new RoundedBoxGeometry(1.73, 1.06, 0.35, 5, 0.3), dark, head, [0, -0.04, 0.77]);
+
+      const eyes = [];
+      for (const x of [-0.43, 0.43]) {
+        const eye = mesh(new THREE.CapsuleGeometry(0.09, 0.18, 6, 14), glow, head, [x, 0.03, 0.967]);
+        eyes.push(eye);
+        const ear = mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.15, 40), copper, head, [Math.sign(x)*1.15, 0, 0]);
+        ear.rotation.z = Math.PI / 2;
+        const cap = mesh(new THREE.CylinderGeometry(0.255, 0.255, 0.17, 40), ceramic, head, [Math.sign(x)*1.23, 0, 0]);
+        cap.rotation.z = Math.PI / 2;
+      }
+
+      mesh(new THREE.CapsuleGeometry(0.018, 0.23, 3, 8), copper, head, [0.15, 0.98, 0]).rotation.z = -0.2;
+      mesh(new THREE.SphereGeometry(0.07, 20, 12), glow, head, [0.18, 1.13, 0]);
+
+      mesh(new THREE.CylinderGeometry(0.33, 0.38, 0.38, 36), trim, group, [0, -0.57, 0]);
+      mesh(new RoundedBoxGeometry(1.53, 1.2, 0.97, 5, 0.4), ceramic, group, [0, -1.2, 0]);
+      mesh(new THREE.CircleGeometry(0.16, 32), copper, group, [0, -1.05, 0.49]);
+      mesh(new THREE.CircleGeometry(0.075, 24), dark, group, [0, -1.05, 0.494]);
+
+      // Distintivo con texto "Capacita-T" a la altura del estómago
+      const textCanvas = document.createElement('canvas');
+      textCanvas.width = 512;
+      textCanvas.height = 160;
+      const tctx = textCanvas.getContext('2d');
+      if (tctx) {
+        tctx.clearRect(0, 0, 512, 160);
+        tctx.fillStyle = '#101B1A';
+        tctx.beginPath();
+        tctx.roundRect(20, 20, 472, 120, 32);
+        tctx.fill();
+        tctx.strokeStyle = '#B4532E';
+        tctx.lineWidth = 8;
+        tctx.stroke();
+        tctx.font = 'bold 54px "Manrope", sans-serif';
+        tctx.textAlign = 'center';
+        tctx.textBaseline = 'middle';
+        tctx.fillStyle = '#FAF8F5';
+        tctx.fillText('Capacita-T', 256, 78);
+      }
+      const textTexture = new THREE.CanvasTexture(textCanvas);
+      textTexture.colorSpace = THREE.SRGBColorSpace;
+      textures.add(textTexture);
+      const textMat = mat(new THREE.MeshBasicMaterial({ map: textTexture, transparent: true }));
+      mesh(new THREE.PlaneGeometry(0.88, 0.28), textMat, group, [0, -1.33, 0.492]);
+
+      for (let s of [-1, 1]) {
+        const arm = mesh(new THREE.CapsuleGeometry(0.2, 0.52, 6, 24), ceramic, group, [s * 0.99, -1.13, 0]);
+        arm.rotation.z = s * 0.3;
+        mesh(new THREE.SphereGeometry(0.19, 24, 16), copper, group, [s * 1.1, -1.5, 0]);
+      }
+
+      group.rotation.y = -0.14; group.rotation.z = -0.035; group.position.y = 0.25;
+
+      // Sombra de contacto
+      const shadowCanvas = document.createElement('canvas');
+      shadowCanvas.width = 128; shadowCanvas.height = 128;
+      const ctx = shadowCanvas.getContext('2d');
+      if (ctx) {
+        const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gradient.addColorStop(0, 'rgba(54,49,26,0.22)');
+        gradient.addColorStop(1, 'rgba(54,49,26,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 128, 128);
+      }
+      const st = new THREE.CanvasTexture(shadowCanvas); textures.add(st);
+      const sm = mat(new THREE.MeshBasicMaterial({ map: st, transparent: true, depthWrite: false }));
+      const shadow = mesh(new THREE.PlaneGeometry(4, 1), sm, scene, [0, -2.03, -0.5]);
+      shadow.rotation.x = -0.2;
+
+      function render(now = performance.now()) {
+        raf = 0; if (disposed || !visible || document.hidden) return;
+        const rawDt = (now - (last || now)) / 1000;
+        const dt = Math.min(rawDt, 0.05);
+        last = now;
+        if (!paused) elapsed += dt;
+        const damping = 1 - Math.exp(-dt * 6);
+        if (!paused) smooth.lerp(pointer, damping);
+
+        if (head && !paused) {
+          head.rotation.y = smooth.x * 0.4;
+          head.rotation.x = -smooth.y * 0.23;
+          head.rotation.z = Math.sin(elapsed * 0.7) * 0.025;
+          group.position.y = 0.25 + Math.sin(elapsed * 1.35) * 0.055;
+          const blink = Math.pow(Math.max(0, Math.cos(elapsed * 1.25)), 50);
+          for (let i = 0; i < eyes.length; i++) {
+            eyes[i].scale.y = 1 - blink * 0.91;
+            eyes[i].position.x = (i ? 0.43 : -0.43) + smooth.x * 0.035;
+          }
+          if (sayHi > 0) {
+            sayHi = Math.max(0, sayHi - dt);
+            head.rotation.z += Math.sin(sayHi * 9) * 0.09;
+          }
+        }
+
+        renderer.render(scene, camera);
+        hero.classList.add('webgl-ready');
+        frameCount++;
+
+        if (rawDt > 0 && rawDt < 0.25 && !paused) {
+          meanFrame += rawDt * 1000; measured++;
+        }
+
+        if (status && (frameCount % 60 === 0 || frameCount === 1 || paused)) {
+          status.textContent = `Three.js r${THREE.REVISION} · ${renderer.info.render.calls} draw calls · ${renderer.info.render.triangles.toLocaleString('es')} triángulos · DPR ${renderer.getPixelRatio()}`;
+        }
+
+        if (!paused) raf = requestAnimationFrame(render);
+      }
+
+      function wake() { if (!raf && !disposed) { last = performance.now(); raf = requestAnimationFrame(render); } }
+      function resize() {
+        const r = host.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        renderer.setSize(r.width, r.height);
+        camera.aspect = r.width / r.height;
+        camera.updateProjectionMatrix();
+        wake();
+      }
+
+      const resizeObserver = new ResizeObserver(resize);
+      resizeObserver.observe(host);
+
+      const onMove = e => {
+        const r = host.getBoundingClientRect();
+        pointer.set(
+          THREE.MathUtils.clamp(((e.clientX - r.left) / r.width) * 2 - 1, -1, 1),
+          THREE.MathUtils.clamp(1 - ((e.clientY - r.top) / r.height) * 2, -1, 1)
+        );
+        wake();
+      };
+      const onLeave = () => { pointer.set(0, 0); wake(); };
+      const onKey = e => {
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home'].includes(e.key)) {
+          e.preventDefault();
+          if (e.key === 'Home') pointer.set(0, 0);
+          else {
+            pointer.x = THREE.MathUtils.clamp(pointer.x + (e.key === 'ArrowLeft' ? -0.2 : e.key === 'ArrowRight' ? 0.2 : 0), -1, 1);
+            pointer.y = THREE.MathUtils.clamp(pointer.y + (e.key === 'ArrowUp' ? 0.2 : e.key === 'ArrowDown' ? -0.2 : 0), -1, 1);
+          }
+          wake();
+        }
+      };
+
+      host.addEventListener('pointermove', onMove);
+      host.addEventListener('pointerdown', onMove);
+      host.addEventListener('pointerleave', onLeave);
+      host.addEventListener('keydown', onKey);
+      hero.addEventListener('pointermove', onMove);
+
+      reduced.addEventListener('change', () => { paused = reduced.matches; wake(); });
+      document.addEventListener('visibilitychange', () => { if (document.hidden) { cancelAnimationFrame(raf); raf = 0; } else wake(); });
+
+      const observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) wake(); else { cancelAnimationFrame(raf); raf = 0; }
+      }, { threshold: 0.01 });
+      observer.observe(hero);
+
+      if (action) {
+        action.addEventListener('click', () => {
+          sayHi = 2;
+          if (response) response.textContent = 'Hola. Ya tienes toda mi atención.';
+          if (paused && head) head.rotation.z = 0.12;
+          wake();
+        });
+      }
+
+      resize();
+      wake();
+    }
+
+    mountScene();
+  </script>
+
+  <!-- Script UI para Pestañas de Actividades y Formulario -->
+  <script>
+    function setTab(tabName) {
+      document.querySelectorAll('.activity-panel').forEach(p => p.classList.add('hidden'));
+      const activePanel = document.getElementById('panel-' + tabName);
+      if (activePanel) activePanel.classList.remove('hidden');
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-[#B4532E]', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-[#EFEAE0]', 'text-[#4A453E]');
+      });
+      const activeBtn = document.getElementById('tab-btn-' + tabName);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-[#EFEAE0]', 'text-[#4A453E]');
+        activeBtn.classList.add('bg-[#B4532E]', 'text-white', 'shadow-sm');
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      document.getElementById('contact-form').classList.add('hidden');
+      document.getElementById('form-success').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
